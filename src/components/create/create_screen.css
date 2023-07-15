@@ -1,0 +1,37 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0px 32px;
+}
+
+.header_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text_header{
+    font-weight: bold;
+}
+
+.text_container{
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.back_icon{
+    color:black;
+}
+
+.profileIcon{
+    color: grey;
+    cursor: pointer;
+}
+
+.reloadIcon{
+    color: white;
+    cursor: pointer;
+}

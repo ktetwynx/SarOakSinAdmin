@@ -1,0 +1,3 @@
+export const API_URL = "http://163.44.196.216:8080/api/";
+export const token =
+  "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrdHcuem90ZWZhbWlseUBnbWFpbC5jb20iLCJyb2xlcyI6WyJBZG1pbiIsIkN1c3RvbWVyIl0sImlzcyI6Imh0dHA6Ly8xNjMuNDQuMTk2LjIxNjo4MDgwL2FwaS9hZG1pbi9sb2dpbiIsImV4cCI6MTY4OTQ4MzAxN30.jcKjaOjmZ1U6H2-zEizig9SD7GQ7euZb2LAxrNsw6FU";
