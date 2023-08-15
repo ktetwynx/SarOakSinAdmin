@@ -6,16 +6,27 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import DataTable from "react-data-table-component";
 import { MyButton } from "../MyButton";
+import { useCallback, useEffect, useState } from "react";
+import { ApiFetchService } from "../../service/ApiFetchService";
+import { API_URL } from "../../Constant";
 
 export function Book() {
+  const [bookList, setBookList] = useState([]);
+
+  useEffect(() => {
+    fetchBookListApi();
+  }, []);
+
   const column = [
     { name: "No", selector: (row: any) => row.id },
     {
       name: "Book Name",
       selector: (row: any) => (
-        <p className="fontsize12pt">
-          <b> {row.book_name}</b>
-        </p>
+        <div className="fontsize12pt">
+          <p>
+            <b> {row.name}</b>
+          </p>
+        </div>
       ),
     },
     { name: "Author Name", selector: (row: any) => row.author_name },
@@ -55,41 +66,22 @@ export function Book() {
       ),
     },
   ];
-  const book_data_list = [
-    {
-      id: 1,
-      category_name: "yatha",
-      book_name: "mg kyaw",
-      author_name: "kyaw kyaw",
-    },
-    {
-      id: 2,
-      category_name: "yatha",
-      book_name: "mg mg",
-      author_name: "kyaw kyaw",
-    },
-    {
-      id: 3,
-      category_name: "yatha",
-      book_name: "kyaw kyaw",
-      author_name: "kyaw kyaw",
-    },
-    {
-      id: 4,
-      category_name: "yatha",
-      book_name: "thi thi",
-      author_name: "kyaw kyaw",
-    },
-    {
-      id: 5,
-      category_name: "yatha",
-      book_name: "hla hla",
-      author_name: "kyaw kyaw",
-    },
-  ];
+
   const BookList = () => {
-    return <DataTable columns={column} data={book_data_list} />;
+    return <DataTable columns={column} data={bookList} />;
   };
+
+  const fetchBookListApi = useCallback(async () => {
+    await ApiFetchService(API_URL + `admin/category/list`, null, {
+      "Content-Type": "multipart/form-data",
+      Accept: "application/json",
+      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+    }).then((response: any) => {
+      console.log(response.content);
+      // setCategoryDataList(response.content);
+      setBookList(response.content);
+    });
+  }, []);
 
   return (
     <div className="container">

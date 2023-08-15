@@ -1,37 +1,50 @@
-import "./create_album.css";
+import "./create_lyric.css";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Button, IconButton, TextField } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 
-export function CreateAlbum() {
+interface File {
+  file: any;
+  fileImage: any;
+}
+
+export function CreatetLyric() {
   const navigate = useNavigate();
-  const [albumName, setAlbumName] = useState("");
-  const [selectedAlbumPhoto, setSelectedAlbumPhoto] = useState({
+  const [lyricName, setLyricName] = useState("");
+  const [selectedLyricPhoto, setSelectedLyricPhoto] = useState({
     file: null,
     fileImage: "",
   });
   const [errorMessage, setErrorMessage] = useState(" ");
-  const [lyricDataList, setLyricDataList] = useState([]);
+  const [singerDataList, setSingerDataList] = useState([]);
+  const [selectedSingerId, setSelectedSingerId] = useState<number>(0);
   const [totalPage, setTotalPage] = useState(0);
+  const lyricTableRef = useGridApiRef();
 
   useEffect(() => {
-    fetchLyricApi();
+    fetchSingerApi();
   }, []);
 
-  const fetchLyricApi = async () => {
-    await ApiFetchService(API_URL + `admin/lyric/list`, null, {
+  const fetchSingerApi = async () => {
+    let formData = new FormData();
+    formData.append("name", "author");
+    formData.append("page", "0");
+    formData.append("size", "20");
+    await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      setLyricDataList(response);
+      if (response.code === 200) {
+        setSingerDataList(response.data.content);
+      }
     });
   };
 
@@ -39,40 +52,60 @@ export function CreateAlbum() {
     navigate(-1);
   }, []);
 
-  const clickedCreateAlbum = useCallback(() => {
+  const clickedCreateLyric = useCallback(() => {
     if (!onValidate()) {
       return;
     } else {
-      fetchCreateAlbumApi();
+      fetchCreateLyricApi();
     }
-  }, [albumName, selectedAlbumPhoto]);
+  }, [lyricName, selectedLyricPhoto, selectedSingerId]);
 
   const onValidate = (): boolean => {
-    let albumName1 = true;
-    let albumPhoto = true;
+    let lyricName1 = true;
+    let lyricPhoto = true;
+    let singerSelected = true;
+
     switch (true) {
-      case !albumName.trim():
-        albumName1 = false;
-        setErrorMessage("Please fill album name");
+      case !lyricName.trim():
+        lyricName1 = false;
+        setErrorMessage("Please fill title");
         break;
-      case selectedAlbumPhoto.file == null:
-        albumPhoto = false;
-        setErrorMessage("Please upload album photo");
+      case selectedLyricPhoto.file == null:
+        lyricPhoto = false;
+        setErrorMessage("Please upload lyric photo");
+        break;
+      case selectedSingerId == 0:
+        singerSelected = false;
+        setErrorMessage("Please select singer");
         break;
       default:
         setErrorMessage(" ");
         break;
     }
 
-    return albumName1 && albumPhoto;
+    return lyricName1 && lyricPhoto && singerSelected;
   };
 
-  const fetchCreateAlbumApi = useCallback(() => {}, []);
-
-  const changeAlbumName = (event: any) => {
-    setAlbumName(event.target.value);
+  const fetchCreateLyricApi = async () => {
+    let formData = new FormData();
+    formData.append("name", "author");
+    formData.append("page", "0");
+    formData.append("size", "20");
+    // await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
+    //   "Content-Type": "multipart/form-data",
+    //   Accept: "application/json",
+    //   Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+    // }).then((response: any) => {
+    //   if (response.code === 200) {
+    //     setSingerDataList(response.data.content);
+    //   }
+    // });
   };
-  const onAlbumPhotoChange = (event: any) => {
+
+  const changeLyricName = (event: any) => {
+    setLyricName(event.target.value);
+  };
+  const onLyricPhotoChange = (event: any) => {
     const imageFile = event.target.files[0];
     if (!imageFile) {
       setErrorMessage("Please select image.");
@@ -85,7 +118,7 @@ export function CreateAlbum() {
     }
 
     setErrorMessage(" ");
-    setSelectedAlbumPhoto((prevState) => ({
+    setSelectedLyricPhoto((prevState) => ({
       file:
         event.target.files[0] != null ? event.target.files[0] : prevState.file,
       fileImage:
@@ -102,13 +135,13 @@ export function CreateAlbum() {
           <IconButton onClick={clickedGoBack} style={{ marginRight: "10px" }}>
             <ArrowBackRoundedIcon className="back_icon" />
           </IconButton>
-          <h3 className="text_header">Create Album</h3>
+          <h3 className="text_header">Create Lyric</h3>
         </div>
       </div>
       <div className="body_wrapper_container">
         <div className="body_container1">
           <div className="albumPhoto_container">
-            {selectedAlbumPhoto.file == null ? (
+            {selectedLyricPhoto.file == null ? (
               <div className="albumPlacehorderPhoto_container">
                 <WallpaperIcon
                   style={{ width: 120, height: 120 }}
@@ -120,8 +153,8 @@ export function CreateAlbum() {
                   variant="contained"
                   component="label"
                 >
-                  Upload Photo
-                  <input onChange={onAlbumPhotoChange} type="file" hidden />
+                  Upload Lyric
+                  <input onChange={onLyricPhotoChange} type="file" hidden />
                 </Button>
               </div>
             ) : (
@@ -129,7 +162,7 @@ export function CreateAlbum() {
                 <img
                   style={{ width: 200, height: 200 }}
                   alt="preview image"
-                  src={selectedAlbumPhoto.fileImage}
+                  src={selectedLyricPhoto.fileImage}
                 />
                 <Button
                   style={{
@@ -152,7 +185,7 @@ export function CreateAlbum() {
                     fontSize="inherit"
                     className="reloadIcon"
                   />
-                  <input onChange={onAlbumPhotoChange} type="file" hidden />
+                  <input onChange={onLyricPhotoChange} type="file" hidden />
                 </Button>
               </div>
             )}
@@ -161,10 +194,10 @@ export function CreateAlbum() {
           <div className="albumPhoto_container">
             <TextField
               type="text"
-              onChange={changeAlbumName}
+              onChange={changeLyricName}
               style={{ width: "100%", marginTop: 32 }}
               id="outlined-basic"
-              label="Album name"
+              label="Title"
               variant="outlined"
             />
 
@@ -180,7 +213,7 @@ export function CreateAlbum() {
             </label>
 
             <MyButton
-              onClick={clickedCreateAlbum}
+              onClick={clickedCreateLyric}
               style={{
                 width: 120,
                 borderRadius: "20px",
@@ -197,6 +230,12 @@ export function CreateAlbum() {
         </div>
         <div className="body_container2">
           <DataGrid
+            apiRef={lyricTableRef}
+            onRowSelectionModelChange={() => {
+              lyricTableRef.current.getSelectedRows().forEach((value, id) => {
+                setSelectedSingerId(value.id);
+              });
+            }}
             // style={{ flex: 1 }}
             columns={[
               { field: "id", minWidth: 100, headerName: "Id" },
@@ -211,7 +250,7 @@ export function CreateAlbum() {
                 headerName: "Image",
                 minWidth: 100,
                 flex: 1,
-                renderCell: (params) => {
+                renderCell: ({ row: { profile } }) => {
                   return (
                     <img
                       style={{
@@ -221,7 +260,7 @@ export function CreateAlbum() {
                         marginBottom: 12,
                         borderRadius: 10,
                       }}
-                      src={`${API_URL}${params.formattedValue}`}
+                      src={`${API_URL}${profile}`}
                       alt=""
                     />
                   );
@@ -230,7 +269,7 @@ export function CreateAlbum() {
             ]}
             autoPageSize={true}
             rowHeight={80}
-            rows={lyricDataList}
+            rows={singerDataList}
             checkboxSelection
           />
         </div>

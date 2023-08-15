@@ -5,11 +5,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import DataTable from "react-data-table-component";
 import { MyButton } from "../MyButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
+import { useNavigate } from "react-router-dom";
 
 export function Lyric() {
+  const navigate = useNavigate();
   const [lyricDataList, setLyricDataList] = useState([]);
   useEffect(() => {
     fetchLyricApi();
@@ -86,12 +88,17 @@ export function Lyric() {
     return <DataTable columns={column} data={lyricDataList} />;
   };
 
+  const clickedCreateLyric = useCallback(() => {
+    navigate("/lyric/create");
+  }, []);
+
   return (
     <div className="container">
       <div className="text_container">
         <div className="header_container">
           <h3 className="text_header">Lyric List</h3>
           <MyButton
+            onClick={clickedCreateLyric}
             style={{
               marginLeft: "16px",
               borderRadius: "20px",

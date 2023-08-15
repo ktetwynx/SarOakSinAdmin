@@ -33,6 +33,10 @@ export function Singer() {
     });
   };
 
+  const clickedEdit = useCallback((row: any) => {
+    navigate("/singer/edit", { state: { singerData: row } });
+  }, []);
+
   const column = [
     { name: "No", selector: (row: any) => row.id },
     {
@@ -69,6 +73,7 @@ export function Singer() {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
+            onClick={() => clickedEdit(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",

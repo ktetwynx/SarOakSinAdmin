@@ -11,6 +11,7 @@ import { TopBar } from "./components/top_bar/TopBar";
 import { CreateCategory } from "./components/create/CreateCategory";
 import { CreateSinger } from "./components/create/CreateSinger";
 import { CreateAlbum } from "./components/create/CreateAlbum";
+import { CreatetLyric } from "./components/create/CreateLyric";
 
 function App() {
   return (
@@ -28,8 +29,10 @@ function App() {
             <Route exact path="/singer" element={<Singer />} />
             <Route exact path="/album" element={<Album />} />
             <Route exact path="/lyric" element={<Lyric />} />
+            <Route exact path="/lyric/create" element={<CreatetLyric />} />
             <Route exact path="/category/create" element={<CreateCategory />} />
             <Route exact path="/singer/create" element={<CreateSinger />} />
+            <Route exact path="/singer/edit" element={<CreateSinger />} />
             <Route exact path="/album/create" element={<CreateAlbum />} />
           </Routes>
         </div>

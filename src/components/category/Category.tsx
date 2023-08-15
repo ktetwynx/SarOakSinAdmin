@@ -13,14 +13,17 @@ import { API_URL } from "../../Constant";
 
 export function Category() {
   const navigate = useNavigate();
+  const [categoryDataList, setCategoryDataList] = useState([]);
   const column = [
     { name: "No", selector: (row: any) => row.id },
     {
       name: "Category Name",
       selector: (row: any) => (
-        <p className="fontsize12pt">
-          <b> {row.category_name}</b>
-        </p>
+        <div className="fontsize12pt">
+          <p>
+            <b> {row.name}</b>
+          </p>
+        </div>
       ),
     },
     {
@@ -54,15 +57,8 @@ export function Category() {
     },
   ];
 
-  const category_data_list = [
-    { id: 1, category_name: "yatha" },
-    { id: 2, category_name: "kyan mar yay" },
-    { id: 3, category_name: "ka pyar" },
-    { id: 4, category_name: "thu ta" },
-    { id: 5, category_name: "phyit ta mhan" },
-  ];
   const CategoryList = () => {
-    return <DataTable columns={column} data={category_data_list} />;
+    return <DataTable columns={column} data={categoryDataList} />;
   };
 
   const clickedCreateCategory = useCallback(() => {
@@ -74,17 +70,13 @@ export function Category() {
   }, []);
 
   const fetchCategoryApi = async () => {
-    let formData = new FormData();
-    formData.append("name", "authorBook");
-    formData.append("page", "1");
-    formData.append("size", "20");
-    await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
+    await ApiFetchService(API_URL + `admin/category/list`, null, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      if (response.code === 200) {
-      }
+      console.log(response.content);
+      setCategoryDataList(response.content);
     });
   };
 

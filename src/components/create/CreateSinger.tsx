@@ -1,8 +1,8 @@
 import "./create_singer.css";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Button, IconButton, TextField } from "@mui/material";
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
@@ -11,21 +11,31 @@ import { API_URL, token } from "../../Constant";
 
 interface File {
   file: any;
-  fileImage: string;
+  fileImage: any;
 }
 
 export function CreateSinger() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  // const { singerData } = state;
   const [singerName, setSingerName] = useState("");
   const [selectedSingerPhoto, setSelectedSingerPhoto] = useState<File>({
     file: null,
-    fileImage: "",
+    fileImage: null,
   });
   const [errorMessage, setErrorMessage] = useState(" ");
+
+  useEffect(() => {
+    setSingerName(state?.singerData.name);
+    setSelectedSingerPhoto({
+      file: null,
+      fileImage: state ? API_URL + state?.singerData.profile : null,
+    });
+  }, [state]);
+
   const clickedGoBack = useCallback(() => {
     navigate(-1);
   }, []);
-
   const clickedCreateSinger = useCallback(() => {
     if (!onValidate()) {
       return;
@@ -42,7 +52,7 @@ export function CreateSinger() {
         singerName1 = false;
         setErrorMessage("Please fill singer name");
         break;
-      case selectedSingerPhoto.file == null:
+      case selectedSingerPhoto.fileImage == null:
         singerPhoto = false;
         setErrorMessage("Please upload singer photo");
         break;
@@ -56,6 +66,9 @@ export function CreateSinger() {
 
   const fetchCreateSingerApi = useCallback(async () => {
     let formData = new FormData();
+    if (state?.singerData) {
+      formData.append("authorId", state.singerData.id);
+    }
     formData.append("name", singerName);
     formData.append("authorType", "2");
     formData.append("profile", selectedSingerPhoto.file);
@@ -101,12 +114,14 @@ export function CreateSinger() {
           <IconButton onClick={clickedGoBack} style={{ marginRight: "10px" }}>
             <ArrowBackRoundedIcon className="back_icon" />
           </IconButton>
-          <h3 className="text_header">Create Singer</h3>
+          <h3 className="text_header">
+            {state?.singerData ? "Edit Singer" : "Create Singer"}
+          </h3>
         </div>
       </div>
       <div className="body_container">
         <div className="singerPhoto_container">
-          {selectedSingerPhoto.file == null ? (
+          {selectedSingerPhoto.fileImage == null ? (
             <div className="singerPlacehorderPhoto_container">
               <AccountCircleIcon
                 style={{ width: 120, height: 120 }}
@@ -159,6 +174,7 @@ export function CreateSinger() {
         <div className="singerPhoto_container">
           <TextField
             type="text"
+            value={singerName}
             onChange={changeSingerName}
             style={{ width: "100%", marginTop: 32 }}
             id="outlined-basic"
@@ -189,7 +205,9 @@ export function CreateSinger() {
             backgroundColor="#39bf39"
             hover_backgroundColor="#2fb02f"
           >
-            <div className="create_text">Create</div>
+            <div className="create_text">
+              {state?.singerData ? "Update" : "Create"}
+            </div>
           </MyButton>
         </div>
       </div>

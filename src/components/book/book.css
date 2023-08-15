@@ -53,5 +53,7 @@
 }
 
 .fontsize12pt{
- font-size: 12pt;
+    height:60px;
+    align-items: center;
+    display: flex;
 }
