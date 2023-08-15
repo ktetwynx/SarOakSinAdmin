@@ -8,7 +8,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_URL, token } from "../../Constant";
 
 interface File {
   file: any;
@@ -18,13 +18,13 @@ interface File {
 export function CreatetLyric() {
   const navigate = useNavigate();
   const [lyricName, setLyricName] = useState("");
-  const [selectedLyricPhoto, setSelectedLyricPhoto] = useState({
+  const [selectedLyricPhoto, setSelectedLyricPhoto] = useState<File>({
     file: null,
     fileImage: "",
   });
   const [errorMessage, setErrorMessage] = useState(" ");
   const [singerDataList, setSingerDataList] = useState([]);
-  const [selectedSingerId, setSelectedSingerId] = useState<number>(0);
+  const [selectedSingerIdArray, setSelectedSingerIdArray] = useState<any>([]);
   const [totalPage, setTotalPage] = useState(0);
   const lyricTableRef = useGridApiRef();
 
@@ -58,7 +58,7 @@ export function CreatetLyric() {
     } else {
       fetchCreateLyricApi();
     }
-  }, [lyricName, selectedLyricPhoto, selectedSingerId]);
+  }, [lyricName, selectedLyricPhoto, selectedSingerIdArray]);
 
   const onValidate = (): boolean => {
     let lyricName1 = true;
@@ -74,7 +74,7 @@ export function CreatetLyric() {
         lyricPhoto = false;
         setErrorMessage("Please upload lyric photo");
         break;
-      case selectedSingerId == 0:
+      case selectedSingerIdArray.length == 0:
         singerSelected = false;
         setErrorMessage("Please select singer");
         break;
@@ -88,18 +88,19 @@ export function CreatetLyric() {
 
   const fetchCreateLyricApi = async () => {
     let formData = new FormData();
-    formData.append("name", "author");
-    formData.append("page", "0");
-    formData.append("size", "20");
-    // await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
-    //   "Content-Type": "multipart/form-data",
-    //   Accept: "application/json",
-    //   Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
-    // }).then((response: any) => {
-    //   if (response.code === 200) {
-    //     setSingerDataList(response.data.content);
-    //   }
-    // });
+    formData.append("authors", selectedSingerIdArray);
+    formData.append("name", lyricName);
+    formData.append("file", selectedLyricPhoto.file);
+    await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
+      "Content-Type": "multipart/form-data",
+      Accept: "application/json",
+      Authorization: token,
+    }).then((response: any) => {
+      // if (response.code === 200) {
+      //   setSingerDataList(response.data.content);
+      // }
+      navigate(-1);
+    });
   };
 
   const changeLyricName = (event: any) => {
@@ -232,9 +233,12 @@ export function CreatetLyric() {
           <DataGrid
             apiRef={lyricTableRef}
             onRowSelectionModelChange={() => {
+              console.log(lyricTableRef.current.getSelectedRows());
+              let selectedSingerIdArray: any[] = [];
               lyricTableRef.current.getSelectedRows().forEach((value, id) => {
-                setSelectedSingerId(value.id);
+                selectedSingerIdArray.push(value.id);
               });
+              setSelectedSingerIdArray(selectedSingerIdArray);
             }}
             // style={{ flex: 1 }}
             columns={[

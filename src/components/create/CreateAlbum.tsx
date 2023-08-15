@@ -6,20 +6,27 @@ import { useNavigate } from "react-router-dom";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_URL, token } from "../../Constant";
+
+interface File {
+  file: any;
+  fileImage: any;
+}
 
 export function CreateAlbum() {
   const navigate = useNavigate();
   const [albumName, setAlbumName] = useState("");
-  const [selectedAlbumPhoto, setSelectedAlbumPhoto] = useState({
+  const [selectedAlbumPhoto, setSelectedAlbumPhoto] = useState<File>({
     file: null,
     fileImage: "",
   });
   const [errorMessage, setErrorMessage] = useState(" ");
   const [lyricDataList, setLyricDataList] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
+  const [selectedLyricIdArray, setSelectedLyricIdArray] = useState<any>();
+  const albumTableRef = useGridApiRef();
 
   useEffect(() => {
     fetchLyricApi();
@@ -45,11 +52,12 @@ export function CreateAlbum() {
     } else {
       fetchCreateAlbumApi();
     }
-  }, [albumName, selectedAlbumPhoto]);
+  }, [albumName, selectedAlbumPhoto, selectedLyricIdArray]);
 
   const onValidate = (): boolean => {
     let albumName1 = true;
     let albumPhoto = true;
+    let lyricSelected = true;
     switch (true) {
       case !albumName.trim():
         albumName1 = false;
@@ -59,15 +67,34 @@ export function CreateAlbum() {
         albumPhoto = false;
         setErrorMessage("Please upload album photo");
         break;
+      case selectedLyricIdArray.length == 0:
+        lyricSelected = false;
+        setErrorMessage("Please select lyric");
+        break;
       default:
         setErrorMessage(" ");
         break;
     }
 
-    return albumName1 && albumPhoto;
+    return albumName1 && albumPhoto && lyricSelected;
   };
 
-  const fetchCreateAlbumApi = useCallback(() => {}, []);
+  const fetchCreateAlbumApi = async () => {
+    let formData = new FormData();
+    formData.append("lyrics", selectedLyricIdArray);
+    formData.append("name", albumName);
+    formData.append("file", selectedAlbumPhoto.file);
+    await ApiFetchService(API_URL + `admin/album/save`, formData, {
+      "Content-Type": "multipart/form-data",
+      Accept: "application/json",
+      Authorization: token,
+    }).then((response: any) => {
+      // if (response.code === 200) {
+      //   setSingerDataList(response.data.content);
+      // }
+      navigate(-1);
+    });
+  };
 
   const changeAlbumName = (event: any) => {
     setAlbumName(event.target.value);
@@ -197,7 +224,16 @@ export function CreateAlbum() {
         </div>
         <div className="body_container2">
           <DataGrid
+            apiRef={albumTableRef}
             // style={{ flex: 1 }}
+            onRowSelectionModelChange={() => {
+              let selectedLyricIdArray: any[] = [];
+              albumTableRef.current.getSelectedRows().forEach((value, id) => {
+                selectedLyricIdArray.push(value.id);
+              });
+              console.log(selectedLyricIdArray);
+              setSelectedLyricIdArray(selectedLyricIdArray);
+            }}
             columns={[
               { field: "id", minWidth: 100, headerName: "Id" },
               {
