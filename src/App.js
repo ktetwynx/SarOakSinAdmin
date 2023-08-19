@@ -33,6 +33,7 @@ function App() {
             <Route exact path="/category/create" element={<CreateCategory />} />
             <Route exact path="/singer/create" element={<CreateSinger />} />
             <Route exact path="/singer/edit" element={<CreateSinger />} />
+            <Route exact path="/album/edit" element={<CreateAlbum />} />
             <Route exact path="/album/create" element={<CreateAlbum />} />
           </Routes>
         </div>

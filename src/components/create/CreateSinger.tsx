@@ -26,11 +26,13 @@ export function CreateSinger() {
   const [errorMessage, setErrorMessage] = useState(" ");
 
   useEffect(() => {
-    setSingerName(state?.singerData.name);
-    setSelectedSingerPhoto({
-      file: null,
-      fileImage: state ? API_URL + state?.singerData.profile : null,
-    });
+    if (state?.singerData) {
+      setSingerName(state?.singerData.name);
+      setSelectedSingerPhoto({
+        file: null,
+        fileImage: state ? API_URL + state?.singerData.profile : null,
+      });
+    }
   }, [state]);
 
   const clickedGoBack = useCallback(() => {

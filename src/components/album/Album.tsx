@@ -37,6 +37,10 @@ export function Album() {
     navigate("/album/create");
   }, []);
 
+  const clickedEdit = useCallback((row: any) => {
+    navigate("/album/edit", { state: { albumData: row } });
+  }, []);
+
   const column = [
     { name: "No", selector: (row: any) => row.id },
     {
@@ -73,6 +77,7 @@ export function Album() {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
+            onClick={() => clickedEdit(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",

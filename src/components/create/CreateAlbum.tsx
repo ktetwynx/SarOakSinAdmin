@@ -2,11 +2,11 @@ import "./create_album.css";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Button, IconButton, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
-import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL, token } from "../../Constant";
 
@@ -17,20 +17,38 @@ interface File {
 
 export function CreateAlbum() {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [albumName, setAlbumName] = useState("");
   const [selectedAlbumPhoto, setSelectedAlbumPhoto] = useState<File>({
     file: null,
-    fileImage: "",
+    fileImage: null,
   });
+  const [rowSelectionModel, setRowSelectionModel] = useState<any>([0, 1]);
   const [errorMessage, setErrorMessage] = useState(" ");
-  const [lyricDataList, setLyricDataList] = useState([]);
+  const [lyricDataList, setLyricDataList] = useState<any>([]);
   const [totalPage, setTotalPage] = useState(0);
   const [selectedLyricIdArray, setSelectedLyricIdArray] = useState<any>();
   const albumTableRef = useGridApiRef();
-
+  let rowIds: GridRowId[] = [];
   useEffect(() => {
     fetchLyricApi();
   }, []);
+
+  useEffect(() => {
+    if (state?.albumData) {
+      setAlbumName(state.albumData.name);
+      setLyricDataList(state.albumData.lyrics);
+      state.albumData.lyrics.forEach((value: any, id: any) => {
+        rowIds.push(value.id);
+      });
+      console.log(lyricDataList);
+      albumTableRef.current.setRowSelectionModel(rowIds);
+      setSelectedAlbumPhoto({
+        file: null,
+        fileImage: state ? API_URL + state?.albumData.imgPath : null,
+      });
+    }
+  }, [state]);
 
   const fetchLyricApi = async () => {
     await ApiFetchService(API_URL + `admin/lyric/list`, null, {
@@ -38,7 +56,7 @@ export function CreateAlbum() {
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      setLyricDataList(response);
+      setLyricDataList((prev: any) => [...prev, ...response]);
     });
   };
 
@@ -63,7 +81,7 @@ export function CreateAlbum() {
         albumName1 = false;
         setErrorMessage("Please fill album name");
         break;
-      case selectedAlbumPhoto.file == null:
+      case selectedAlbumPhoto.fileImage == null:
         albumPhoto = false;
         setErrorMessage("Please upload album photo");
         break;
@@ -81,6 +99,9 @@ export function CreateAlbum() {
 
   const fetchCreateAlbumApi = async () => {
     let formData = new FormData();
+    if (state?.albumData) {
+      formData.append("albumId", state.albumData.id);
+    }
     formData.append("lyrics", selectedLyricIdArray);
     formData.append("name", albumName);
     formData.append("file", selectedAlbumPhoto.file);
@@ -129,13 +150,15 @@ export function CreateAlbum() {
           <IconButton onClick={clickedGoBack} style={{ marginRight: "10px" }}>
             <ArrowBackRoundedIcon className="back_icon" />
           </IconButton>
-          <h3 className="text_header">Create Album</h3>
+          <h3 className="text_header">
+            {state?.albumData ? "Edit Album" : "Create Album"}
+          </h3>
         </div>
       </div>
       <div className="body_wrapper_container">
         <div className="body_container1">
           <div className="albumPhoto_container">
-            {selectedAlbumPhoto.file == null ? (
+            {selectedAlbumPhoto.fileImage == null ? (
               <div className="albumPlacehorderPhoto_container">
                 <WallpaperIcon
                   style={{ width: 120, height: 120 }}
@@ -188,6 +211,7 @@ export function CreateAlbum() {
           <div className="albumPhoto_container">
             <TextField
               type="text"
+              value={albumName}
               onChange={changeAlbumName}
               style={{ width: "100%", marginTop: 32 }}
               id="outlined-basic"
@@ -218,7 +242,9 @@ export function CreateAlbum() {
               backgroundColor="#39bf39"
               hover_backgroundColor="#2fb02f"
             >
-              <div className="create_text">Create</div>
+              <div className="create_text">
+                {state?.albumData ? "Update" : "Create"}
+              </div>
             </MyButton>
           </div>
         </div>
@@ -226,12 +252,11 @@ export function CreateAlbum() {
           <DataGrid
             apiRef={albumTableRef}
             // style={{ flex: 1 }}
-            onRowSelectionModelChange={() => {
+            onRowSelectionModelChange={(rowSelectionModel) => {
               let selectedLyricIdArray: any[] = [];
-              albumTableRef.current.getSelectedRows().forEach((value, id) => {
-                selectedLyricIdArray.push(value.id);
+              rowSelectionModel.forEach((value, id) => {
+                selectedLyricIdArray.push(value);
               });
-              console.log(selectedLyricIdArray);
               setSelectedLyricIdArray(selectedLyricIdArray);
             }}
             columns={[
