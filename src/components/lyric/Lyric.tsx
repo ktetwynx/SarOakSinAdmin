@@ -17,6 +17,10 @@ export function Lyric() {
     fetchLyricApi();
   }, []);
 
+  const clickedEdit = useCallback((row: any) => {
+    navigate("/lyric/edit", { state: { lyricData: row } });
+  }, []);
+
   const fetchLyricApi = async () => {
     let formData = new FormData();
     formData.append("name", "lyric");
@@ -69,6 +73,7 @@ export function Lyric() {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
+            onClick={() => clickedEdit(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",

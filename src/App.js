@@ -30,6 +30,7 @@ function App() {
             <Route exact path="/album" element={<Album />} />
             <Route exact path="/lyric" element={<Lyric />} />
             <Route exact path="/lyric/create" element={<CreatetLyric />} />
+            <Route exact path="/lyric/edit" element={<CreatetLyric />} />
             <Route exact path="/category/create" element={<CreateCategory />} />
             <Route exact path="/singer/create" element={<CreateSinger />} />
             <Route exact path="/singer/edit" element={<CreateSinger />} />

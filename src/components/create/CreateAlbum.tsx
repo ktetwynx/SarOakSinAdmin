@@ -41,7 +41,6 @@ export function CreateAlbum() {
       state.albumData.lyrics.forEach((value: any, id: any) => {
         rowIds.push(value.id);
       });
-      console.log(lyricDataList);
       albumTableRef.current.setRowSelectionModel(rowIds);
       setSelectedAlbumPhoto({
         file: null,

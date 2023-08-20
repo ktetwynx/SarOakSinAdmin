@@ -2,11 +2,11 @@ import "./create_lyric.css";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Button, IconButton, TextField } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
-import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL, token } from "../../Constant";
 
@@ -17,20 +17,36 @@ interface File {
 
 export function CreatetLyric() {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [lyricName, setLyricName] = useState("");
   const [selectedLyricPhoto, setSelectedLyricPhoto] = useState<File>({
     file: null,
     fileImage: "",
   });
   const [errorMessage, setErrorMessage] = useState(" ");
-  const [singerDataList, setSingerDataList] = useState([]);
+  const [singerDataList, setSingerDataList] = useState<any>([]);
   const [selectedSingerIdArray, setSelectedSingerIdArray] = useState<any>([]);
   const [totalPage, setTotalPage] = useState(0);
   const lyricTableRef = useGridApiRef();
+  let rowIds: GridRowId[] = [];
 
   useEffect(() => {
     fetchSingerApi();
   }, []);
+
+  useEffect(() => {
+    if (state?.lyricData) {
+      setLyricName(state.lyricData.name);
+      state.lyricData.authors.forEach((value: any, id: any) => {
+        rowIds.push(value.id);
+      });
+      lyricTableRef.current.setRowSelectionModel(rowIds);
+      setSelectedLyricPhoto({
+        file: null,
+        fileImage: API_URL + state.lyricData.imgPath,
+      });
+    }
+  }, [state]);
 
   const fetchSingerApi = async () => {
     let formData = new FormData();
@@ -43,7 +59,22 @@ export function CreatetLyric() {
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
       if (response.code === 200) {
-        setSingerDataList(response.data.content);
+        let array1 = response.data.content;
+        let array2 = state.lyricData.authors;
+        let array = [...array2, ...array1];
+        let uniqueIds: any[] = [];
+        // console.log(array);
+        let unique = array.filter((data: any) => {
+          const isDuplicate = uniqueIds.includes(data.id);
+          console.log(isDuplicate);
+          if (!isDuplicate) {
+            uniqueIds.push(data.id);
+
+            return true;
+          }
+          return false;
+        });
+        setSingerDataList(unique);
       }
     });
   };
@@ -70,7 +101,7 @@ export function CreatetLyric() {
         lyricName1 = false;
         setErrorMessage("Please fill title");
         break;
-      case selectedLyricPhoto.file == null:
+      case selectedLyricPhoto.fileImage == null:
         lyricPhoto = false;
         setErrorMessage("Please upload lyric photo");
         break;
@@ -88,6 +119,9 @@ export function CreatetLyric() {
 
   const fetchCreateLyricApi = async () => {
     let formData = new FormData();
+    if (state?.lyricData) {
+      formData.append("lyricId", state.lyricData.id);
+    }
     formData.append("authors", selectedSingerIdArray);
     formData.append("name", lyricName);
     formData.append("file", selectedLyricPhoto.file);
@@ -136,13 +170,15 @@ export function CreatetLyric() {
           <IconButton onClick={clickedGoBack} style={{ marginRight: "10px" }}>
             <ArrowBackRoundedIcon className="back_icon" />
           </IconButton>
-          <h3 className="text_header">Create Lyric</h3>
+          <h3 className="text_header">
+            {state?.lyricData ? "Edit Lyric" : "Create Lyric"}
+          </h3>
         </div>
       </div>
       <div className="body_wrapper_container">
         <div className="body_container1">
           <div className="albumPhoto_container">
-            {selectedLyricPhoto.file == null ? (
+            {selectedLyricPhoto.fileImage == null ? (
               <div className="albumPlacehorderPhoto_container">
                 <WallpaperIcon
                   style={{ width: 120, height: 120 }}
@@ -195,6 +231,7 @@ export function CreatetLyric() {
           <div className="albumPhoto_container">
             <TextField
               type="text"
+              value={lyricName}
               onChange={changeLyricName}
               style={{ width: "100%", marginTop: 32 }}
               id="outlined-basic"
@@ -225,18 +262,19 @@ export function CreatetLyric() {
               backgroundColor="#39bf39"
               hover_backgroundColor="#2fb02f"
             >
-              <div className="create_text">Create</div>
+              <div className="create_text">
+                {state?.lyricData ? "Update" : "Create"}
+              </div>
             </MyButton>
           </div>
         </div>
         <div className="body_container2">
           <DataGrid
             apiRef={lyricTableRef}
-            onRowSelectionModelChange={() => {
-              console.log(lyricTableRef.current.getSelectedRows());
+            onRowSelectionModelChange={(rowSelectionModel) => {
               let selectedSingerIdArray: any[] = [];
-              lyricTableRef.current.getSelectedRows().forEach((value, id) => {
-                selectedSingerIdArray.push(value.id);
+              rowSelectionModel.forEach((value, id) => {
+                selectedSingerIdArray.push(value);
               });
               setSelectedSingerIdArray(selectedSingerIdArray);
             }}
@@ -247,7 +285,7 @@ export function CreatetLyric() {
                 field: "name",
                 minWidth: 300,
                 flex: 2,
-                headerName: "Lyric Name",
+                headerName: "Singer Name",
               },
               {
                 field: "imgPath",
