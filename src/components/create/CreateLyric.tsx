@@ -125,10 +125,6 @@ export function CreatetLyric() {
     formData.append("authors", selectedSingerIdArray);
     formData.append("name", lyricName);
     formData.append("file", selectedLyricPhoto.file);
-    // console.log(state.lyricData.id);
-    // console.log(lyricName);
-    // console.log(selectedLyricPhoto.file);
-    // console.log(selectedSingerIdArray);
     await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
