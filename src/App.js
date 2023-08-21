@@ -12,6 +12,7 @@ import { CreateCategory } from "./components/create/CreateCategory";
 import { CreateSinger } from "./components/create/CreateSinger";
 import { CreateAlbum } from "./components/create/CreateAlbum";
 import { CreatetLyric } from "./components/create/CreateLyric";
+import { CreateAuthor } from "./components/create/CreateAuthor";
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
             <Route exact path="/album" element={<Album />} />
             <Route exact path="/lyric" element={<Lyric />} />
             <Route exact path="/lyric/create" element={<CreatetLyric />} />
-            <Route exact path="/lyric/edit" element={<CreatetLyric />} />
+            <Route exact path="/author/create" element={<CreateAuthor />} />
+            <Route exact path="/author/edit" element={<CreateAuthor />} />
             <Route exact path="/category/create" element={<CreateCategory />} />
             <Route exact path="/category/edit" element={<CreateCategory />} />
             <Route exact path="/singer/create" element={<CreateSinger />} />

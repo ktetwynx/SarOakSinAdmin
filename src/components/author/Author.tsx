@@ -5,11 +5,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import DataTable from "react-data-table-component";
 import { MyButton } from "../MyButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
+import { useNavigate } from "react-router-dom";
 
 export function Author() {
+  const navigate = useNavigate();
   const [authorDataList, setAuthtorDataList] = useState([]);
   useEffect(() => {
     fetchAuthorApi();
@@ -32,6 +34,14 @@ export function Author() {
       }
     });
   };
+
+  const clickedEdit = useCallback((row: any) => {
+    navigate("/author/edit", { state: { authorData: row } });
+  }, []);
+
+  const clickedCreateAuthor = useCallback(() => {
+    navigate("/author/create");
+  }, []);
 
   const column = [
     { name: "No", selector: (row: any) => row.id },
@@ -75,6 +85,7 @@ export function Author() {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
+            onClick={() => clickedEdit(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -100,6 +111,7 @@ export function Author() {
         <div className="header_container">
           <h3 className="text_header">Author List</h3>
           <MyButton
+            onClick={() => clickedCreateAuthor()}
             style={{
               marginLeft: "16px",
               borderRadius: "20px",
