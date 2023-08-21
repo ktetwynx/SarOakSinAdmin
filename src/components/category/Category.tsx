@@ -42,6 +42,7 @@ export function Category() {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
+            onClick={() => clickedEdit(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -56,6 +57,10 @@ export function Category() {
       ),
     },
   ];
+
+  const clickedEdit = useCallback((row: any) => {
+    navigate("/category/edit", { state: { categoryData: row } });
+  }, []);
 
   const CategoryList = () => {
     return <DataTable columns={column} data={categoryDataList} />;

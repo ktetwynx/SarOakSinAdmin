@@ -59,22 +59,26 @@ export function CreatetLyric() {
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
       if (response.code === 200) {
-        let array1 = response.data.content;
-        let array2 = state.lyricData.authors;
-        let array = [...array2, ...array1];
-        let uniqueIds: any[] = [];
-        // console.log(array);
-        let unique = array.filter((data: any) => {
-          const isDuplicate = uniqueIds.includes(data.id);
-          console.log(isDuplicate);
-          if (!isDuplicate) {
-            uniqueIds.push(data.id);
+        if (state?.lyricData) {
+          let array1 = response.data.content;
+          let array2 = state.lyricData.authors;
+          let array = [...array2, ...array1];
+          let uniqueIds: any[] = [];
+          // console.log(array);
+          let unique = array.filter((data: any) => {
+            const isDuplicate = uniqueIds.includes(data.id);
+            console.log(isDuplicate);
+            if (!isDuplicate) {
+              uniqueIds.push(data.id);
 
-            return true;
-          }
-          return false;
-        });
-        setSingerDataList(unique);
+              return true;
+            }
+            return false;
+          });
+          setSingerDataList(unique);
+        } else {
+          setSingerDataList(response.data.content);
+        }
       }
     });
   };
