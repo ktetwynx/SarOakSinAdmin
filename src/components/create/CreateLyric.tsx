@@ -21,7 +21,7 @@ export function CreatetLyric() {
   const [lyricName, setLyricName] = useState("");
   const [selectedLyricPhoto, setSelectedLyricPhoto] = useState<File>({
     file: null,
-    fileImage: "",
+    fileImage: null,
   });
   const [errorMessage, setErrorMessage] = useState(" ");
   const [singerDataList, setSingerDataList] = useState<any>([]);
@@ -125,14 +125,15 @@ export function CreatetLyric() {
     formData.append("authors", selectedSingerIdArray);
     formData.append("name", lyricName);
     formData.append("file", selectedLyricPhoto.file);
+    // console.log(state.lyricData.id);
+    // console.log(lyricName);
+    // console.log(selectedLyricPhoto.file);
+    // console.log(selectedSingerIdArray);
     await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
       Authorization: token,
     }).then((response: any) => {
-      // if (response.code === 200) {
-      //   setSingerDataList(response.data.content);
-      // }
       navigate(-1);
     });
   };
