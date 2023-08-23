@@ -13,6 +13,7 @@ import { CreateSinger } from "./components/create/CreateSinger";
 import { CreateAlbum } from "./components/create/CreateAlbum";
 import { CreatetLyric } from "./components/create/CreateLyric";
 import { CreateAuthor } from "./components/create/CreateAuthor";
+import { CreateBook } from "./components/create/CreateBook";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
             <Route exact path="/album" element={<Album />} />
             <Route exact path="/lyric" element={<Lyric />} />
             <Route exact path="/lyric/create" element={<CreatetLyric />} />
+            <Route exact path="/book/create" element={<CreateBook />} />
+            <Route exact path="/book/edit" element={<CreateBook />} />
             <Route exact path="/author/create" element={<CreateAuthor />} />
             <Route exact path="/author/edit" element={<CreateAuthor />} />
             <Route exact path="/category/create" element={<CreateCategory />} />

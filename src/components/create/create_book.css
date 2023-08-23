@@ -1,0 +1,84 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0px 32px;
+}
+
+.header_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text_header{
+    font-weight: bold;
+}
+
+.text_container{
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.back_icon{
+    color:black;
+}
+.body_container1{
+    margin-top: 32px;
+    margin-left: 60px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+.upload_pdf_container{
+    margin-top: 32px;
+    height: 700px;
+    flex:1;
+    border: '1px solid red';
+    margin-left: 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+.body_container2{
+    display: flex;
+    flex: 1;
+    margin-left: 42px;
+    height: 700px;
+}
+
+.bookUploadPdf_container{
+    position: relative;
+    align-items: center; 
+    flex-direction: row; 
+    height: 700px;
+    display:flex;
+}
+
+.body_wrapper_container{
+    display: flex;
+    flex-direction: row;
+}
+
+.albumPhoto_container{
+  width: 250px;
+  align-items: center; 
+  flex-direction: column; 
+  display:flex;
+}
+
+.albumPlacehorderPhoto_container{
+    align-items: center; 
+    flex-direction: column; 
+    display:flex;
+}
+.bookUploadPhoto_container{
+    position: relative;
+    align-items: center; 
+    flex-direction: row; 
+    display:flex;
+ 
+}

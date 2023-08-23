@@ -52,8 +52,25 @@
  font-weight: bold;
 }
 
-.fontsize12pt{
-    height:60px;
-    align-items: center;
-    display: flex;
+.book_name{
+    /* height:60px;
+    align-items: center; */
+    width: 180px;
+    white-space: nowrap;
+    font-size: medium;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    display: inline-block;
+
 }
+
+.category_list {
+    list-style-type: none;
+    align-items: center;
+    min-width: 400px;
+    margin: 0px 0px;
+    padding: 0px 0px;
+    margin-top: 6px;
+  }
+
+  
