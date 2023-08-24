@@ -14,6 +14,8 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { pageNavigationPlugin } from "@react-pdf-viewer/page-navigation";
+import { RenderCurrentPageLabelProps } from "@react-pdf-viewer/page-navigation";
 
 interface File {
   file: any;
@@ -31,17 +33,21 @@ export function CreateBook() {
   const [errorMessage, setErrorMessage] = useState(" ");
   const [categoryDataList, setCategoryDataList] = useState<any>([]);
   const [totalPage, setTotalPage] = useState(0);
+  const [pdfTotalPage, setPdfTotalPage] = useState<any>();
   const [selectedCategoriesId, setSelectedCategoriesId] = useState<any>();
 
   const [selectedAuthor, setSelectedAuthor] = useState<any>({
     id: null,
-    name: null,
+    label: null,
   });
   const [authors, setAuthors] = useState<any>([]);
   const [bookPdfFileView, setBookPdfFileView] = useState<any>(null);
   const [bookPdfFile, setBookPdfFile] = useState<any>(null);
   const bookTableRef = useGridApiRef();
   const bookPlugin = defaultLayoutPlugin();
+
+  const pageNavigationPluginInstance = pageNavigationPlugin();
+  const { CurrentPageLabel } = pageNavigationPluginInstance;
 
   let rowIds: GridRowId[] = [];
   useEffect(() => {
@@ -51,11 +57,10 @@ export function CreateBook() {
 
   useEffect(() => {
     if (state?.bookData) {
-      console.log(state.bookData);
       setBookName(state.bookData.name);
       setSelectedAuthor({
         id: state.bookData.myAuthor.id,
-        name: state.bookData.myAuthor.name,
+        label: state.bookData.myAuthor.name,
       });
       setBookPdfFileView(API_URL + state.bookData.path);
       // setCategoryDataList(state.bookData.categories);
@@ -71,7 +76,6 @@ export function CreateBook() {
   }, [state]);
 
   const fetchAuthorApi = async () => {
-    console.log("fetchAuthorApi");
     let formData = new FormData();
     formData.append("name", "authorBook");
     formData.append("page", "0");
@@ -81,7 +85,6 @@ export function CreateBook() {
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      console.log("response");
       if (response.code === 200) {
         let authorList: any[] = [];
         response.data.content.forEach((value: any, id: any) => {
@@ -173,16 +176,13 @@ export function CreateBook() {
     formData.append("name", bookName);
     formData.append("imgFile", selectedBookPhoto.file);
     formData.append("file", bookPdfFile);
-    formData.forEach((value: any, id: any) => {
-      console.log(value);
-    });
+    formData.append("page", pdfTotalPage);
     await ApiFetchService(API_URL + `admin/book/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
       Authorization: token,
     }).then((response: any) => {
       // if (response.code === 200) {
-      //   setSingerDataList(response.data.content);
       // }
       navigate(-1);
     });
@@ -190,6 +190,10 @@ export function CreateBook() {
 
   const changeBookName = (event: any) => {
     setBookName(event.target.value);
+  };
+
+  const changeAuthorName = (event: any) => {
+    setSelectedAuthor({ label: event.target.value });
   };
 
   const onBookPdfChange = (event: any) => {
@@ -235,6 +239,16 @@ export function CreateBook() {
           : prevState.fileImage,
     }));
   };
+
+  const pdfTotalNumberView = useCallback(() => {
+    return (
+      <CurrentPageLabel>
+        {(props: RenderCurrentPageLabelProps) => (
+          <span>{`${props.currentPage + 1} of ${props.numberOfPages}`}</span>
+        )}
+      </CurrentPageLabel>
+    );
+  }, []);
 
   return (
     <div className="container">
@@ -313,15 +327,22 @@ export function CreateBook() {
             />
 
             <Autocomplete
-              value={selectedAuthor.name}
-              disablePortal
+              value={selectedAuthor.id ? selectedAuthor : ""}
+              disableClearable={true}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(event: any, value: any) => {
-                setSelectedAuthor({ id: value.id, name: value.label });
+                setSelectedAuthor({ id: value.id, label: value.label });
               }}
               id="combo-box-demo"
               options={authors}
               sx={{ width: "100%", marginTop: 3 }}
-              renderInput={(params) => <TextField {...params} label="Author" />}
+              renderInput={(params) => (
+                <TextField
+                  onChange={changeAuthorName}
+                  {...params}
+                  label="Author"
+                />
+              )}
             />
 
             <label
@@ -382,9 +403,46 @@ export function CreateBook() {
             </div>
           ) : (
             <div className="bookUploadPdf_container">
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                <Viewer fileUrl={bookPdfFileView} />
-              </Worker>
+              <div
+                style={{
+                  border: "1px solid rgba(0, 0, 0, 0.3)",
+                  display: "flex",
+                  flex: 1,
+                  flexDirection: "column",
+                  height: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    alignItems: "center",
+                    backgroundColor: "#eeeeee",
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.3)",
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "8px",
+                  }}
+                >
+                  {pdfTotalNumberView()}
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    overflow: "hidden",
+                  }}
+                >
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                    <Viewer
+                      onDocumentLoad={(e: any) => {
+                        setPdfTotalPage(e.doc.numPages);
+                      }}
+                      fileUrl={bookPdfFileView}
+                      plugins={[pageNavigationPluginInstance]}
+                    />
+                  </Worker>
+                </div>
+              </div>
+
               <Button
                 style={{
                   height: 30,
