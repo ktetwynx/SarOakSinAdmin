@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
+import { reverseDataArray } from "../../service/Utility";
 
 export function Author() {
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ export function Author() {
     }).then((response: any) => {
       console.log("response");
       if (response.code === 200) {
-        setAuthtorDataList(response.data.content);
+        const reverseData = reverseDataArray(response.data.content);
+        setAuthtorDataList(reverseData);
       }
     });
   };

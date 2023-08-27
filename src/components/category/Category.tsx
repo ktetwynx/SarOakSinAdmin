@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
+import { reverseDataArray } from "../../service/Utility";
 
 export function Category() {
   const navigate = useNavigate();
@@ -80,8 +81,8 @@ export function Category() {
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      console.log(response.content);
-      setCategoryDataList(response.content);
+      const reverseData = reverseDataArray(response.content);
+      setCategoryDataList(reverseData);
     });
   };
 

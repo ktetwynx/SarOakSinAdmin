@@ -59,8 +59,8 @@ export function CreateBook() {
     if (state?.bookData) {
       setBookName(state.bookData.name);
       setSelectedAuthor({
-        id: state.bookData.myAuthor.id,
-        label: state.bookData.myAuthor.name,
+        id: state.bookData.myAuthor?.id,
+        label: state.bookData.myAuthor?.name,
       });
       setBookPdfFileView(API_URL + state.bookData.path);
       // setCategoryDataList(state.bookData.categories);
@@ -184,6 +184,7 @@ export function CreateBook() {
     }).then((response: any) => {
       // if (response.code === 200) {
       // }
+      console.log(response);
       navigate(-1);
     });
   };

@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
+import { reverseDataArray } from "../../service/Utility";
 
 export function Lyric() {
   const navigate = useNavigate();
@@ -32,7 +33,8 @@ export function Lyric() {
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
       if (response.code === 200) {
-        setLyricDataList(response.data.content);
+        const reverseData = reverseDataArray(response.data.content);
+        setLyricDataList(reverseData);
       }
     });
   };

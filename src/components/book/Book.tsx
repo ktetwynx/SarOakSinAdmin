@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
+import { reverseDataArray } from "../../service/Utility";
 
 export function Book() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export function Book() {
         </div>
       ),
     },
-    { name: "Author Name", selector: (row: any) => row.myAuthor.name },
+    { name: "Author Name", selector: (row: any) => row.myAuthor?.name },
     {
       name: "Category List",
       selector: (row: any) =>
@@ -109,14 +110,16 @@ export function Book() {
   };
 
   const fetchBookListApi = useCallback(async () => {
-    await ApiFetchService(API_URL + `user/book/list`, null, {
+    let formData = new FormData();
+    formData.append("page", "0");
+    formData.append("size", "100");
+    await ApiFetchService(API_URL + `user/book/list`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
       Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
     }).then((response: any) => {
-      console.log(response.content);
-      // setCategoryDataList(response.content);
-      setBookList(response.content);
+      const reverseData = reverseDataArray(response.content);
+      setBookList(reverseData);
     });
   }, []);
 
