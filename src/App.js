@@ -26,10 +26,10 @@ function App() {
           {token && <SideBar />}
 
           <Routes>
-            {/* <Route exact path="/" element={token ? <Navigate to="/category" /> : <Navigate to="/login" />} /> */}
-            <Route exact path="/" element={<Navigate to="/category" />} />
-            {/* <Route exact path="/category" element={token ? <Category /> : <Navigate to="/login" />} /> */}
-            <Route exact path="/category" element={<Category />} />
+            <Route exact path="/" element={token ? <Navigate to="/category" /> : <Navigate to="/login" />} />
+            <Route exact path="/category" element={token ? <Category /> : <Navigate to="/login" />} />
+            {/* <Route exact path="/" element={<Navigate to="/category" />} />
+            <Route exact path="/category" element={<Category />} /> */}
             <Route exact path="/author" element={token ? <Author /> : <Navigate to="/login" />} />
             <Route exact path="/book" element={token ? <Book /> : <Navigate to="/login" />} />
             <Route exact path="/singer" element={token ? <Singer /> : <Navigate to="/login" />} />
@@ -40,8 +40,8 @@ function App() {
             <Route exact path="/book/edit" element={token ? <CreateBook /> : <Navigate to="/login" />} />
             <Route exact path="/author/create" element={token ? <CreateAuthor /> : <Navigate to="/login" />} />
             <Route exact path="/author/edit" element={token ? <CreateAuthor /> : <Navigate to="/login" />} />
-            {/* <Route exact path="/category/create" element={token ? <CreateCategory /> : <Navigate to="/login" />} /> */}
-            <Route exact path="/category/create" element={<CreateCategory />} />
+            <Route exact path="/category/create" element={token ? <CreateCategory /> : <Navigate to="/login" />} />
+            {/* <Route exact path="/category/create" element={<CreateCategory />} /> */}
             <Route exact path="/category/edit" element={token ? <CreateCategory /> : <Navigate to="/login" />} />
             <Route exact path="/singer/create" element={token ? <CreateSinger /> : <Navigate to="/login" />} />
             <Route exact path="/singer/edit" element={token ? <CreateSinger /> : <Navigate to="/login" />} />
