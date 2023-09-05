@@ -2,9 +2,9 @@ export const BEARER_TOKEN = "BEARER_TOKEN";
 export const PROFILE = "PROFILE";
 
 export interface Profile {
-  id: 0;
-  username: "";
-  email: "";
+  id: number;
+  username: string;
+  email: string;
 }
 
 export function setToken(token: any) {

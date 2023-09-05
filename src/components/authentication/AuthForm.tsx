@@ -11,7 +11,7 @@ import { API_URL } from "../../Constant";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import "./AuthForm.css";
 import { ConnectedProps, connect } from "react-redux";
-import { setToken } from "../../redux/reducer";
+import { Profile, setProfile, setToken } from "../../redux/reducer";
 
 interface Data {
   errors?: { [key: string]: string };
@@ -26,6 +26,9 @@ const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
   return {
     setToken: (token: any) => {
       dispatch(setToken(token));
+    },
+    setProfile: (profile: Profile) => {
+      dispatch(setProfile(profile));
     },
   };
 };
@@ -70,32 +73,25 @@ const AuthForm = (props: Props) => {
   }, [userName, password]);
 
   const fetchLogin = async () => {
-    props.setToken("wefewfe");
-    navigate("/category");
-    // let formData = new FormData();
-    // formData.append("email", userName);
-    // formData.append("password", password);
-    // await ApiFetchService(API_URL + `admin/login`, formData, {
-    //   "Content-Type": "multipart/form-data",
-    //   Accept: "application/json",
-    //   Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
-    // }).then(async (response: any) => {
-    //   // if (response.code === 200) {
-    //   //   setSingerDataList(response.data.content);
-    //   // }
-    //   if (response.status === 403) {
-    //     setErrorMessage("Check UserName And Password");
-    //   } else if (response.ok) {
-    //     const resData = await response.json();
-    //     const token = resData.jwtToken;
-    //     if (token != null) {
-    //       localStorage.setItem("token", token);
-    //       navigate("/");
-    //     }
-    //   } else {
-    //     navigate("/login");
-    //   }
-    // });
+    let formData = new FormData();
+    formData.append("email", userName);
+    formData.append("password", password);
+    await ApiFetchService(API_URL + `custom/admin/login`, formData, {
+      "Content-Type": "multipart/form-data",
+      Accept: "application/json",
+      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+    }).then(async (response: any) => {
+      if (response.code == 200) {
+        props.setToken(response.data.jwtToken);
+        console.log(response);
+        props.setProfile({
+          id: response.data.id,
+          username: response.data.fullname,
+          email: response.data.email,
+        });
+        navigate("/category");
+      }
+    });
   };
 
   const onValidate = (): boolean => {

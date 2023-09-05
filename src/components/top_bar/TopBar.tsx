@@ -3,12 +3,13 @@ import "./topbar.css";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ConnectedProps, connect } from "react-redux";
-import { setToken } from "../../redux/reducer";
+import { Profile, setToken } from "../../redux/reducer";
 import { useNavigate } from "react-router-dom";
 
-const mapstateToProps = (state: { token: any }) => {
+const mapstateToProps = (state: { token: any; profile: Profile }) => {
   return {
     token: state.token,
+    profile: state.profile,
   };
 };
 
@@ -39,7 +40,7 @@ const TopBar = (props: Props) => {
         </div>
         <div className="topRight">
           <AccountCircleIcon fontSize="medium" className="profileIcon" />
-          <h4 className="text_username">Username</h4>
+          <h4 className="text_username">{props.profile.username}</h4>
           <span
             onClick={() => {
               props.setToken(null);
