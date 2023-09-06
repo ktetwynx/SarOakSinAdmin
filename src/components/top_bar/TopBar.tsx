@@ -40,7 +40,7 @@ const TopBar = (props: Props) => {
         </div>
         <div className="topRight">
           <AccountCircleIcon fontSize="medium" className="profileIcon" />
-          {/* <h4 className="text_username">{props?.profile.username}</h4> */}
+          <h4 className="text_username">{props?.profile.username}</h4>
           <span
             onClick={() => {
               props.setToken(null);
