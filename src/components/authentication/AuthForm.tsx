@@ -73,25 +73,26 @@ const AuthForm = (props: Props) => {
   }, [userName, password]);
 
   const fetchLogin = async () => {
-    let formData = new FormData();
-    formData.append("email", userName);
-    formData.append("password", password);
-    await ApiFetchService(API_URL + `custom/admin/login`, formData, {
-      "Content-Type": "multipart/form-data",
-      Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
-    }).then(async (response: any) => {
-      if (response.code == 200) {
-        props.setToken(response.data.jwtToken);
-        console.log(response);
-        props.setProfile({
-          id: response.data.id,
-          username: response.data.fullname,
-          email: response.data.email,
-        });
-        navigate("/category");
-      }
-    });
+    props.setToken("sdfa");
+    // let formData = new FormData();
+    // formData.append("email", userName);
+    // formData.append("password", password);
+    // await ApiFetchService(API_URL + `custom/admin/login`, formData, {
+    //   "Content-Type": "multipart/form-data",
+    //   Accept: "application/json",
+    //   Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+    // }).then(async (response: any) => {
+    //   if (response.code == 200) {
+    //     props.setToken(response.data.jwtToken);
+    //     console.log(response);
+    //     props.setProfile({
+    //       id: response.data.id,
+    //       username: response.data.fullname,
+    //       email: response.data.email,
+    //     });
+    //     navigate("/category");
+    //   }
+    // });
   };
 
   const onValidate = (): boolean => {
