@@ -6,16 +6,16 @@ import { Category } from "./components/category/Category";
 import { Lyric } from "./components/lyric/Lyric";
 import { SideBar } from "./components/side_bar/SideBar";
 import { Singer } from "./components/singer/Singer";
-import { CreateCategory } from "./components/create/CreateCategory";
-import { CreateSinger } from "./components/create/CreateSinger";
-import { CreateAlbum } from "./components/create/CreateAlbum";
-import { CreatetLyric } from "./components/create/CreateLyric";
-import { CreateAuthor } from "./components/create/CreateAuthor";
-import { CreateBook } from "./components/create/CreateBook";
-import AuthForm from "./components/authentication/AuthForm";
 import { ConnectedProps, connect } from "react-redux";
 import { setToken } from "./redux/reducer";
 import TopBar from "./components/top_bar/TopBar";
+import CreateBook from "./components/create/CreateBook";
+import CreateAuthor from "./components/create/CreateAuthor";
+import CreateCategory from "./components/create/CreateCategory";
+import CreateSinger from "./components/create/CreateSinger";
+import CreateAlbum from "./components/create/CreateAlbum";
+import AuthForm from "./components/authentication/AuthForm";
+import CreateLyric from "./components/create/CreateLyric";
 
 const mapstateToProps = (state: { token: any }) => {
   return {
@@ -48,7 +48,8 @@ const RouteScreen = (props: Props) => {
                 <Route path="/singer" element={<Singer />} />
                 <Route path="/album" element={<Album />} />
                 <Route path="/lyric" element={<Lyric />} />
-                <Route path="/lyric/create" element={<CreatetLyric />} />
+                <Route path="/lyric/create" element={<CreateLyric />} />
+                <Route path="/lyric/edit" element={<CreateLyric />} />
                 <Route path="/book/create" element={<CreateBook />} />
                 <Route path="/book/edit" element={<CreateBook />} />
                 <Route path="/author/create" element={<CreateAuthor />} />

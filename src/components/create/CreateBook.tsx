@@ -9,20 +9,35 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL, token } from "../../Constant";
+import { API_URL } from "../../Constant";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { pageNavigationPlugin } from "@react-pdf-viewer/page-navigation";
 import { RenderCurrentPageLabelProps } from "@react-pdf-viewer/page-navigation";
+import { ConnectedProps, connect } from "react-redux";
 
 interface File {
   file: any;
   fileImage: any;
 }
 
-export function CreateBook() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const CreateBook = (props: Props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [bookName, setBookName] = useState("");
@@ -180,7 +195,7 @@ export function CreateBook() {
     await ApiFetchService(API_URL + `admin/book/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: token,
+      Authorization: props.token,
     }).then((response: any) => {
       // if (response.code === 200) {
       // }
@@ -498,4 +513,5 @@ export function CreateBook() {
       </div>
     </div>
   );
-}
+};
+export default connectToStore(CreateBook);

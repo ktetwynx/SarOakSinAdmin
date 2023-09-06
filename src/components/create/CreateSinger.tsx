@@ -7,14 +7,29 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL, token } from "../../Constant";
+import { API_URL } from "../../Constant";
+import { ConnectedProps, connect } from "react-redux";
 
 interface File {
   file: any;
   fileImage: any;
 }
 
-export function CreateSinger() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const CreateSinger = (props: Props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   // const { singerData } = state;
@@ -77,7 +92,7 @@ export function CreateSinger() {
     await ApiFetchService(API_URL + `admin/author/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: token,
+      Authorization: props.token,
     }).then((response: any) => {
       // if (response.code === 201) {
       // }
@@ -215,4 +230,6 @@ export function CreateSinger() {
       </div>
     </div>
   );
-}
+};
+
+export default connectToStore(CreateSinger);

@@ -8,14 +8,29 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL, token } from "../../Constant";
+import { API_URL } from "../../Constant";
+import { ConnectedProps, connect } from "react-redux";
 
 interface File {
   file: any;
   fileImage: any;
 }
 
-export function CreatetLyric() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const CreatetLyric = (props: Props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [lyricName, setLyricName] = useState("");
@@ -132,7 +147,7 @@ export function CreatetLyric() {
     await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: token,
+      Authorization: props.token,
     }).then((response: any) => {
       navigate(-1);
     });
@@ -319,4 +334,6 @@ export function CreatetLyric() {
       </div>
     </div>
   );
-}
+};
+
+export default connectToStore(CreatetLyric);

@@ -5,9 +5,24 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MyButton } from "../MyButton";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL, token } from "../../Constant";
+import { API_URL } from "../../Constant";
+import { ConnectedProps, connect } from "react-redux";
 
-export function CreateCategory() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const CreateCategory = (props: Props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [categoryName, setCategoryName] = useState("");
@@ -59,7 +74,7 @@ export function CreateCategory() {
     await ApiFetchService(API_URL + `admin/category/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: token,
+      Authorization: props.token,
     }).then((response: any) => {
       // if (response.code === 200) {
       //   setSingerDataList(response.data.content);
@@ -123,4 +138,5 @@ export function CreateCategory() {
       </div>
     </div>
   );
-}
+};
+export default connectToStore(CreateCategory);
