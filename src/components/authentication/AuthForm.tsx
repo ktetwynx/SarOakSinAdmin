@@ -74,6 +74,12 @@ const AuthForm = (props: Props) => {
 
   const fetchLogin = async () => {
     props.setToken("sdfa");
+    props.setProfile({
+      id: 1,
+      username: "haha",
+      email: "zzz",
+    });
+    navigate("/category");
     // let formData = new FormData();
     // formData.append("email", userName);
     // formData.append("password", password);
