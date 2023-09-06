@@ -92,7 +92,7 @@ const CreateAuthor = (props: Props) => {
     await ApiFetchService(API_URL + `admin/author/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: props.token,
+      Authorization: `Bearer ${props.token}`,
     }).then((response: any) => {
       // if (response.code === 201) {
       // }

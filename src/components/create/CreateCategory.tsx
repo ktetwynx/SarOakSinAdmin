@@ -48,7 +48,7 @@ const CreateCategory = (props: Props) => {
     } else {
       fetchCreateCategoryApi();
     }
-  }, [categoryName]);
+  }, [categoryName, props.token]);
 
   const onValidate = (): boolean => {
     let categoryName1 = true;
@@ -74,7 +74,7 @@ const CreateCategory = (props: Props) => {
     await ApiFetchService(API_URL + `admin/category/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: props.token,
+      Authorization: `Bearer ${props.token}`,
     }).then((response: any) => {
       // if (response.code === 200) {
       //   setSingerDataList(response.data.content);

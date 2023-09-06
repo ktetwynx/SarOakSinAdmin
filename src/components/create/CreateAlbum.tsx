@@ -122,7 +122,7 @@ const CreateAlbum = (props: Props) => {
     await ApiFetchService(API_URL + `admin/album/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: props.token,
+      Authorization: `Bearer ${props.token}`,
     }).then((response: any) => {
       navigate(-1);
     });

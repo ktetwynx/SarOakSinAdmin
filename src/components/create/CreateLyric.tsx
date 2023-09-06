@@ -147,7 +147,7 @@ const CreatetLyric = (props: Props) => {
     await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: props.token,
+      Authorization: `Bearer ${props.token}`,
     }).then((response: any) => {
       navigate(-1);
     });
