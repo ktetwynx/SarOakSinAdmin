@@ -11,9 +11,27 @@ import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
 import { reverseDataArray } from "../../service/Utility";
+import { ConnectedProps, connect } from "react-redux";
+import { DeleteDialog } from "../DeleteDialog";
 
-export function Book() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const Book = (props: Props) => {
   const navigate = useNavigate();
+  const [selectedDeleteRow, setSelectedDeleteRow] = useState();
+  const [isShowDeleteDialog, setIsShowDeleteDialog] = useState<boolean>(false);
   const [bookList, setBookList] = useState([]);
 
   useEffect(() => {
@@ -23,6 +41,40 @@ export function Book() {
   const clickedCreateBook = useCallback(() => {
     navigate("/book/create");
   }, []);
+
+  const clickedOnDelete = useCallback(
+    async (row: any) => {
+      let formData = new FormData();
+      formData.append("id", row.id);
+      formData.append("name", "book");
+      await ApiFetchService(API_URL + `admin/delete`, formData, {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+        Authorization: `Bearer ${props.token}`,
+      }).then((response: any) => {
+        if (response.code == 200) {
+          const deletedFilterList = bookList.filter(
+            (value: any, index: number) => value.id !== row.id
+          );
+          setIsShowDeleteDialog(false);
+          setBookList(deletedFilterList);
+        }
+      });
+    },
+    [bookList]
+  );
+
+  const clickedDelete = useCallback(
+    async (row: any) => {
+      if (!isShowDeleteDialog) {
+        setIsShowDeleteDialog(true);
+        setSelectedDeleteRow(row);
+      } else {
+        setIsShowDeleteDialog(false);
+      }
+    },
+    [isShowDeleteDialog]
+  );
 
   const clickedEdit = useCallback((row: any) => {
     navigate("/book/edit", { state: { bookData: row } });
@@ -78,6 +130,7 @@ export function Book() {
       selector: (row: any) => (
         <div className="actions_container">
           <MyButton
+            onClick={() => clickedDelete(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -156,6 +209,15 @@ export function Book() {
         </div>
       </div>
       <BookList />
+
+      <DeleteDialog
+        data={selectedDeleteRow}
+        isVisible={isShowDeleteDialog}
+        clickedOnClose={() => setIsShowDeleteDialog(false)}
+        clickedOnDelete={(row) => clickedOnDelete(row)}
+      />
     </div>
   );
-}
+};
+
+export default connectToStore(Book);

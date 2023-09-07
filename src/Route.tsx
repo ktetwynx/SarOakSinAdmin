@@ -1,11 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Album } from "./components/album/Album";
-import { Author } from "./components/author/Author";
-import { Book } from "./components/book/Book";
-import { Category } from "./components/category/Category";
-import { Lyric } from "./components/lyric/Lyric";
 import { SideBar } from "./components/side_bar/SideBar";
-import { Singer } from "./components/singer/Singer";
 import { ConnectedProps, connect } from "react-redux";
 import { setToken } from "./redux/reducer";
 import TopBar from "./components/top_bar/TopBar";
@@ -16,6 +10,12 @@ import CreateSinger from "./components/create/CreateSinger";
 import CreateAlbum from "./components/create/CreateAlbum";
 import AuthForm from "./components/authentication/AuthForm";
 import CreateLyric from "./components/create/CreateLyric";
+import Category from "./components/category/Category";
+import Author from "./components/author/Author";
+import Book from "./components/book/Book";
+import Singer from "./components/singer/Singer";
+import Album from "./components/album/Album";
+import Lyric from "./components/lyric/Lyric";
 
 const mapstateToProps = (state: { token: any }) => {
   return {

@@ -10,9 +10,27 @@ import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
 import { reverseDataArray } from "../../service/Utility";
+import { ConnectedProps, connect } from "react-redux";
+import { DeleteDialog } from "../DeleteDialog";
 
-export function Singer() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const Singer = (props: Props) => {
   const navigate = useNavigate();
+  const [selectedDeleteRow, setSelectedDeleteRow] = useState();
+  const [isShowDeleteDialog, setIsShowDeleteDialog] = useState<boolean>(false);
   const [singerDataList, setSingerDataList] = useState([]);
   useEffect(() => {
     fetchSingerApi();
@@ -34,6 +52,40 @@ export function Singer() {
       }
     });
   };
+
+  const clickedOnDelete = useCallback(
+    async (row: any) => {
+      let formData = new FormData();
+      formData.append("id", row.id);
+      formData.append("name", "author");
+      await ApiFetchService(API_URL + `admin/delete`, formData, {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+        Authorization: `Bearer ${props.token}`,
+      }).then((response: any) => {
+        if (response.code == 200) {
+          const deletedFilterList = singerDataList.filter(
+            (value: any, index: number) => value.id !== row.id
+          );
+          setIsShowDeleteDialog(false);
+          setSingerDataList(deletedFilterList);
+        }
+      });
+    },
+    [singerDataList]
+  );
+
+  const clickedDelete = useCallback(
+    async (row: any) => {
+      if (!isShowDeleteDialog) {
+        setIsShowDeleteDialog(true);
+        setSelectedDeleteRow(row);
+      } else {
+        setIsShowDeleteDialog(false);
+      }
+    },
+    [isShowDeleteDialog]
+  );
 
   const clickedEdit = useCallback((row: any) => {
     navigate("/singer/edit", { state: { singerData: row } });
@@ -64,6 +116,7 @@ export function Singer() {
       selector: (row: any) => (
         <div className="actions_container">
           <MyButton
+            onClick={() => clickedDelete(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -132,6 +185,15 @@ export function Singer() {
         </div>
       </div>
       <SingerList />
+
+      <DeleteDialog
+        data={selectedDeleteRow}
+        isVisible={isShowDeleteDialog}
+        clickedOnClose={() => setIsShowDeleteDialog(false)}
+        clickedOnDelete={(row) => clickedOnDelete(row)}
+      />
     </div>
   );
-}
+};
+
+export default connectToStore(Singer);

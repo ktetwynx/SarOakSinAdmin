@@ -11,9 +11,27 @@ import axios from "axios";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_URL } from "../../Constant";
 import { reverseDataArray } from "../../service/Utility";
+import { ConnectedProps, connect } from "react-redux";
+import { DeleteDialog } from "../DeleteDialog";
 
-export function Category() {
+const mapstateToProps = (state: { token: any }) => {
+  return {
+    token: state.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {};
+};
+
+const connectToStore = connect(mapstateToProps, mapDispatchToProps);
+
+type Props = ConnectedProps<typeof connectToStore>;
+
+const Category = (props: Props) => {
   const navigate = useNavigate();
+  const [selectedDeleteRow, setSelectedDeleteRow] = useState();
+  const [isShowDeleteDialog, setIsShowDeleteDialog] = useState<boolean>(false);
   const [categoryDataList, setCategoryDataList] = useState([]);
   const column = [
     { name: "No", selector: (row: any) => row.id },
@@ -32,6 +50,7 @@ export function Category() {
       selector: (row: any) => (
         <div className="actions_container">
           <MyButton
+            onClick={() => clickedDelete(row)}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -59,9 +78,43 @@ export function Category() {
     },
   ];
 
+  const clickedOnDelete = useCallback(
+    async (row: any) => {
+      let formData = new FormData();
+      formData.append("id", row.id);
+      formData.append("name", "category");
+      await ApiFetchService(API_URL + `admin/delete`, formData, {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+        Authorization: `Bearer ${props.token}`,
+      }).then((response: any) => {
+        if (response.code == 200) {
+          const deletedFilterList = categoryDataList.filter(
+            (value: any, index: number) => value.id !== row.id
+          );
+          setIsShowDeleteDialog(false);
+          setCategoryDataList(deletedFilterList);
+        }
+      });
+    },
+    [categoryDataList]
+  );
+
   const clickedEdit = useCallback((row: any) => {
     navigate("/category/edit", { state: { categoryData: row } });
   }, []);
+
+  const clickedDelete = useCallback(
+    async (row: any) => {
+      if (!isShowDeleteDialog) {
+        setIsShowDeleteDialog(true);
+        setSelectedDeleteRow(row);
+      } else {
+        setIsShowDeleteDialog(false);
+      }
+    },
+    [isShowDeleteDialog]
+  );
 
   const CategoryList = () => {
     return <DataTable columns={column} data={categoryDataList} />;
@@ -119,6 +172,15 @@ export function Category() {
         </div>
       </div>
       <CategoryList />
+
+      <DeleteDialog
+        data={selectedDeleteRow}
+        isVisible={isShowDeleteDialog}
+        clickedOnClose={() => setIsShowDeleteDialog(false)}
+        clickedOnDelete={(row) => clickedOnDelete(row)}
+      />
     </div>
   );
-}
+};
+
+export default connectToStore(Category);
