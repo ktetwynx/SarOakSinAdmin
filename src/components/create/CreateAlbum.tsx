@@ -118,7 +118,7 @@ const CreateAlbum = (props: Props) => {
     }
     formData.append("lyrics", selectedLyricIdArray);
     formData.append("name", albumName);
-    formData.append("file", selectedAlbumPhoto.file);
+    formData.append("albumImg", selectedAlbumPhoto.file);
     await ApiFetchService(API_URL + `admin/album/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
