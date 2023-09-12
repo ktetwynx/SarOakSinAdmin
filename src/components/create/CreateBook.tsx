@@ -73,6 +73,7 @@ const CreateBook = (props: Props) => {
   useEffect(() => {
     if (state?.bookData) {
       setBookName(state.bookData.name);
+      setPdfTotalPage(state.bookData.page);
       setSelectedAuthor({
         id: state.bookData.myAuthor?.id,
         label: state.bookData.myAuthor?.name,
