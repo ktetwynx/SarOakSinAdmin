@@ -7,7 +7,7 @@ import {
   useNavigation,
   useNavigate,
 } from "react-router-dom";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import "./AuthForm.css";
 import { ConnectedProps, connect } from "react-redux";
@@ -79,7 +79,7 @@ const AuthForm = (props: Props) => {
     await ApiFetchService(API_URL + `custom/admin/login`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then(async (response: any) => {
       if (response.code == 200) {
         props.setToken(response.data.jwtToken);

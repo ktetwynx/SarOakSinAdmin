@@ -8,7 +8,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { ConnectedProps, connect } from "react-redux";
 
 interface File {
@@ -34,6 +34,7 @@ const CreatetLyric = (props: Props) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [lyricName, setLyricName] = useState("");
+  const [lyricText, setLyricText] = useState("");
   const [selectedLyricPhoto, setSelectedLyricPhoto] = useState<File>({
     file: null,
     fileImage: null,
@@ -52,6 +53,8 @@ const CreatetLyric = (props: Props) => {
   useEffect(() => {
     if (state?.lyricData) {
       setLyricName(state.lyricData.name);
+      setLyricText(state.lyricData.lyricText);
+      console.log(state.lyricData.lyricText);
       state.lyricData.authors.forEach((value: any, id: any) => {
         rowIds.push(value.id);
       });
@@ -71,7 +74,7 @@ const CreatetLyric = (props: Props) => {
     await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       if (response.code === 200) {
         if (state?.lyricData) {
@@ -108,12 +111,13 @@ const CreatetLyric = (props: Props) => {
     } else {
       fetchCreateLyricApi();
     }
-  }, [lyricName, selectedLyricPhoto, selectedSingerIdArray]);
+  }, [lyricName, selectedLyricPhoto, selectedSingerIdArray, lyricText]);
 
   const onValidate = (): boolean => {
     let lyricName1 = true;
     let lyricPhoto = true;
     let singerSelected = true;
+    // let lyricText1 = true;
 
     switch (true) {
       case !lyricName.trim():
@@ -128,6 +132,10 @@ const CreatetLyric = (props: Props) => {
         singerSelected = false;
         setErrorMessage("Please select singer");
         break;
+      // case !lyricText.trim():
+      //   lyricText1 = false;
+      //   setErrorMessage("Please fill lyric text");
+      //   break;
       default:
         setErrorMessage(" ");
         break;
@@ -144,6 +152,8 @@ const CreatetLyric = (props: Props) => {
     formData.append("authors", selectedSingerIdArray);
     formData.append("name", lyricName);
     formData.append("file", selectedLyricPhoto.file);
+    formData.append("lyricText", lyricText);
+
     await ApiFetchService(API_URL + `admin/lyric/save`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
@@ -155,6 +165,10 @@ const CreatetLyric = (props: Props) => {
 
   const changeLyricName = (event: any) => {
     setLyricName(event.target.value);
+  };
+  const changeLyricText = (event: any) => {
+    console.log(event.target.value);
+    setLyricText(event.target.value);
   };
   const onLyricPhotoChange = (event: any) => {
     const imageFile = event.target.files[0];
@@ -192,17 +206,27 @@ const CreatetLyric = (props: Props) => {
         </div>
       </div>
       <div className="body_wrapper_container">
-        <div className="body_container1">
-          <div className="albumPhoto_container">
+        <div className="lyric_body_container1">
+          <div className="lyric_container1">
             {selectedLyricPhoto.fileImage == null ? (
-              <div className="albumPlacehorderPhoto_container">
+              <div className="lyricPlacehorderPhoto_container">
                 <WallpaperIcon
-                  style={{ width: 120, height: 120 }}
+                  style={{
+                    width: 120,
+                    height: 120,
+                    alignSelf: "center",
+                    marginBottom: 12,
+                  }}
                   fontSize="inherit"
                   className="profileIcon"
                 />
                 <Button
-                  style={{ width: 140, marginTop: 12, fontSize: 12 }}
+                  style={{
+                    width: 140,
+                    marginTop: 12,
+                    fontSize: 12,
+                    alignSelf: "center",
+                  }}
                   variant="contained"
                   component="label"
                 >
@@ -211,9 +235,9 @@ const CreatetLyric = (props: Props) => {
                 </Button>
               </div>
             ) : (
-              <div className="albumUploadPhoto_container">
+              <div className="lyricPlacehorderPhoto_container1">
                 <img
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: 250, height: 400, resize: "inline" }}
                   alt="preview image"
                   src={selectedLyricPhoto.fileImage}
                 />
@@ -244,12 +268,12 @@ const CreatetLyric = (props: Props) => {
             )}
           </div>
 
-          <div className="albumPhoto_container">
+          <div className="lyric_container1">
             <TextField
               type="text"
               value={lyricName}
               onChange={changeLyricName}
-              style={{ width: "100%", marginTop: 32 }}
+              style={{ width: "100%", marginTop: 12 }}
               id="outlined-basic"
               label="Title"
               variant="outlined"
@@ -260,6 +284,7 @@ const CreatetLyric = (props: Props) => {
                 color: "red",
                 margin: 16,
                 fontSize: 12,
+                alignSelf: "center",
                 fontWeight: "bold",
               }}
             >
@@ -271,7 +296,7 @@ const CreatetLyric = (props: Props) => {
               style={{
                 width: 120,
                 borderRadius: "20px",
-                marginTop: 28,
+                marginTop: 6,
                 alignSelf: "center",
               }}
               textColor="white"
@@ -284,7 +309,8 @@ const CreatetLyric = (props: Props) => {
             </MyButton>
           </div>
         </div>
-        <div className="body_container2">
+
+        <div className="lyric_body_container2">
           <DataGrid
             apiRef={lyricTableRef}
             onRowSelectionModelChange={(rowSelectionModel) => {
@@ -294,12 +320,12 @@ const CreatetLyric = (props: Props) => {
               });
               setSelectedSingerIdArray(selectedSingerIdArray);
             }}
-            // style={{ flex: 1 }}
+            style={{ width: 400 }}
             columns={[
               { field: "id", minWidth: 100, headerName: "Id" },
               {
                 field: "name",
-                minWidth: 300,
+                minWidth: 160,
                 flex: 2,
                 headerName: "Singer Name",
               },
@@ -329,6 +355,29 @@ const CreatetLyric = (props: Props) => {
             rowHeight={80}
             rows={singerDataList}
             checkboxSelection
+          />
+        </div>
+        <div className="lyric_container">
+          <TextField
+            id="outlined-multiline-static"
+            label="Lyric Text"
+            multiline
+            value={lyricText}
+            onChange={changeLyricText}
+            maxRows={1}
+            style={{
+              width: "95%",
+              alignSelf: "center",
+            }}
+            inputProps={{
+              style: {
+                height: "680px",
+                textRendering: "auto",
+                resize: "both",
+                paddingRight: 32,
+                width: "90%",
+              },
+            }}
           />
         </div>
       </div>

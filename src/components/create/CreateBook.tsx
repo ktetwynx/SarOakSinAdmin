@@ -9,7 +9,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -99,7 +99,7 @@ const CreateBook = (props: Props) => {
     await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       if (response.code === 200) {
         let authorList: any[] = [];
@@ -115,7 +115,7 @@ const CreateBook = (props: Props) => {
     await ApiFetchService(API_URL + `admin/category/list`, null, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       setCategoryDataList((prev: any) => [...prev, ...response.content]);
     });

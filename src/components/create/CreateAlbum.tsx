@@ -8,7 +8,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { MyButton } from "../MyButton";
 import { DataGrid, GridRowId, useGridApiRef } from "@mui/x-data-grid";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { ConnectedProps, connect } from "react-redux";
 
 interface File {
@@ -68,7 +68,7 @@ const CreateAlbum = (props: Props) => {
     await ApiFetchService(API_URL + `admin/lyric/list`, null, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       setLyricDataList((prev: any) => [...prev, ...response]);
     });

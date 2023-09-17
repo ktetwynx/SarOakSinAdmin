@@ -7,7 +7,7 @@ import DataTable from "react-data-table-component";
 import { MyButton } from "../MyButton";
 import { useCallback, useEffect, useState } from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { useNavigate } from "react-router-dom";
 import { reverseDataArray } from "../../service/Utility";
 import { ConnectedProps, connect } from "react-redux";
@@ -45,7 +45,7 @@ const Author = (props: Props) => {
     await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       console.log("response");
       if (response.code === 200) {

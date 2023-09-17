@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { ApiFetchService } from "../../service/ApiFetchService";
-import { API_URL } from "../../Constant";
+import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
 import { reverseDataArray } from "../../service/Utility";
 import { ConnectedProps, connect } from "react-redux";
 import { DeleteDialog } from "../DeleteDialog";
@@ -132,7 +132,7 @@ const Category = (props: Props) => {
     await ApiFetchService(API_URL + `admin/category/list`, null, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
-      Authorization: "ApiKey f90f76d2-f70d-11ed-b67e-0242ac120002",
+      Authorization: API_KEY_PRODUCTION,
     }).then((response: any) => {
       const reverseData = reverseDataArray(response.content);
       setCategoryDataList(reverseData);
