@@ -16,6 +16,7 @@ import Book from "./components/book/Book";
 import Singer from "./components/singer/Singer";
 import Album from "./components/album/Album";
 import Lyric from "./components/lyric/Lyric";
+import AppAds from "./components/AppAds";
 
 const mapstateToProps = (state: { token: any }) => {
   return {
@@ -60,6 +61,7 @@ const RouteScreen = (props: Props) => {
                 <Route path="/singer/edit" element={<CreateSinger />} />
                 <Route path="/album/edit" element={<CreateAlbum />} />
                 <Route path="/album/create" element={<CreateAlbum />} />
+                <Route path="/app-ads.txt" element={<AppAds />} />
               </Routes>
             </div>
           </div>
@@ -69,6 +71,7 @@ const RouteScreen = (props: Props) => {
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<AuthForm />} />
+            <Route path="/app-ads.txt" element={<AppAds />} />
           </Routes>
         </BrowserRouter>
       )}
