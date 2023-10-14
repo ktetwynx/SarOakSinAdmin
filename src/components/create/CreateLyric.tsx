@@ -70,7 +70,7 @@ const CreatetLyric = (props: Props) => {
     let formData = new FormData();
     formData.append("name", "author");
     formData.append("page", "0");
-    formData.append("size", "20");
+    formData.append("size", "100");
     await ApiFetchService(API_URL + `user/lyric/home-navigate`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
