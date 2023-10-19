@@ -43,7 +43,6 @@ const Book = (props: Props) => {
 
   useEffect(() => {
     fetchBookListApi();
-    restoreScrollPosition();
   }, []);
 
   function restoreScrollPosition() {
@@ -51,7 +50,7 @@ const Book = (props: Props) => {
     console.log("getItem", y, "E<W<WE<");
     setTimeout(() => {
       window.scrollBy(0, y);
-    }, 1000);
+    }, 500);
   }
 
   const clickedCreateBook = useCallback(() => {
@@ -189,6 +188,7 @@ const Book = (props: Props) => {
     }).then((response: any) => {
       const reverseData = reverseDataArray(response.content);
       setBookList(reverseData);
+      restoreScrollPosition();
     });
   }, []);
 
