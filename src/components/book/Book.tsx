@@ -42,16 +42,15 @@ const Book = (props: Props) => {
   const [bookList, setBookList] = useState([]);
 
   useEffect(() => {
-    fetchBookListApi();
-    restoreScrollPosition();
+    const y: any = sessionStorage.getItem(STORAGE_KEY) || 0;
+    fetchBookListApi(y);
   }, []);
 
-  function restoreScrollPosition() {
-    const y: any = sessionStorage.getItem(STORAGE_KEY) || 0;
+  function restoreScrollPosition(y: number) {
     // console.log("getItem", y, "E<W<WE<");
     setTimeout(() => {
       window.scrollBy(0, y);
-    }, 2000);
+    }, 300);
   }
 
   const clickedCreateBook = useCallback(() => {
@@ -158,7 +157,9 @@ const Book = (props: Props) => {
             <DeleteIcon fontSize="small" className="icon" />
           </MyButton>
           <MyButton
-            onClick={() => clickedEdit(row)}
+            onClick={() => {
+              clickedEdit(row);
+            }}
             style={{
               marginRight: "16px",
               borderRadius: "20px",
@@ -178,7 +179,7 @@ const Book = (props: Props) => {
     return <DataTable noContextMenu={true} columns={column} data={bookList} />;
   };
 
-  const fetchBookListApi = useCallback(async () => {
+  const fetchBookListApi = useCallback(async (y: number) => {
     let formData = new FormData();
     formData.append("page", "0");
     formData.append("size", "500");
@@ -189,6 +190,7 @@ const Book = (props: Props) => {
     }).then((response: any) => {
       const reverseData = reverseDataArray(response.content);
       setBookList(reverseData);
+      restoreScrollPosition(y);
     });
   }, []);
 
