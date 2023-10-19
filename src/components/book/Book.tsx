@@ -43,14 +43,15 @@ const Book = (props: Props) => {
 
   useEffect(() => {
     fetchBookListApi();
+    restoreScrollPosition();
   }, []);
 
   function restoreScrollPosition() {
     const y: any = sessionStorage.getItem(STORAGE_KEY) || 0;
-    console.log("getItem", y, "E<W<WE<");
+    // console.log("getItem", y, "E<W<WE<");
     setTimeout(() => {
       window.scrollBy(0, y);
-    }, 500);
+    }, 2000);
   }
 
   const clickedCreateBook = useCallback(() => {
@@ -174,7 +175,7 @@ const Book = (props: Props) => {
   ];
 
   const BookList = () => {
-    return <DataTable columns={column} data={bookList} />;
+    return <DataTable noContextMenu={true} columns={column} data={bookList} />;
   };
 
   const fetchBookListApi = useCallback(async () => {
@@ -188,7 +189,6 @@ const Book = (props: Props) => {
     }).then((response: any) => {
       const reverseData = reverseDataArray(response.content);
       setBookList(reverseData);
-      restoreScrollPosition();
     });
   }, []);
 

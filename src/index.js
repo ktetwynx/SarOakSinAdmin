@@ -28,9 +28,10 @@ function stupifyBrowser() {
 
 function bindScrollPositionSaving() {
   const handleScroll = () => {
+    // console.log(window.location.key, "E<W<WE<");
     if (window.location.pathname != "/book/edit")
       sessionStorage.setItem(STORAGE_KEY, window.pageYOffset);
-    console.log("setItem", window.pageYOffset, "E<W<WE<");
+    // console.log("setItem", window.pageYOffset, "E<W<WE<");
   };
   window.addEventListener("scroll", handleScroll);
 }
