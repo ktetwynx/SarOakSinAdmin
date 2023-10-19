@@ -6,13 +6,20 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import DataTable from "react-data-table-component";
 import { MyButton } from "../MyButton";
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { ApiFetchService } from "../../service/ApiFetchService";
 import { API_KEY_PRODUCTION, API_URL } from "../../Constant";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { reverseDataArray } from "../../service/Utility";
 import { ConnectedProps, connect } from "react-redux";
 import { DeleteDialog } from "../DeleteDialog";
+import { STORAGE_KEY } from "../..";
 
 const mapstateToProps = (state: { token: any }) => {
   return {
@@ -36,7 +43,16 @@ const Book = (props: Props) => {
 
   useEffect(() => {
     fetchBookListApi();
+    restoreScrollPosition();
   }, []);
+
+  function restoreScrollPosition() {
+    const y: any = sessionStorage.getItem(STORAGE_KEY) || 0;
+    console.log("getItem", y, "E<W<WE<");
+    setTimeout(() => {
+      window.scrollBy(0, y);
+    }, 1000);
+  }
 
   const clickedCreateBook = useCallback(() => {
     navigate("/book/create");
@@ -76,9 +92,9 @@ const Book = (props: Props) => {
     [isShowDeleteDialog]
   );
 
-  const clickedEdit = useCallback((row: any) => {
+  const clickedEdit = (row: any) => {
     navigate("/book/edit", { state: { bookData: row } });
-  }, []);
+  };
 
   const column = [
     { name: "No", selector: (row: any) => row.id },

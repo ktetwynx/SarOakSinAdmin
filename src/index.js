@@ -15,3 +15,24 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+export const STORAGE_KEY = "aside-scroll-position-y";
+function main() {
+  stupifyBrowser();
+  bindScrollPositionSaving();
+}
+
+function stupifyBrowser() {
+  window.history.scrollRestoration = "manual";
+}
+
+function bindScrollPositionSaving() {
+  const handleScroll = () => {
+    if (window.location.pathname != "/book/edit")
+      sessionStorage.setItem(STORAGE_KEY, window.pageYOffset);
+    console.log("setItem", window.pageYOffset, "E<W<WE<");
+  };
+  window.addEventListener("scroll", handleScroll);
+}
+
+window.addEventListener("load", main);
