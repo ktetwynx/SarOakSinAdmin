@@ -182,7 +182,7 @@ const Book = (props: Props) => {
   const fetchBookListApi = useCallback(async (y: number) => {
     let formData = new FormData();
     formData.append("page", "0");
-    formData.append("size", "500");
+    formData.append("size", "1000");
     await ApiFetchService(API_URL + `user/book/list`, formData, {
       "Content-Type": "multipart/form-data",
       Accept: "application/json",
